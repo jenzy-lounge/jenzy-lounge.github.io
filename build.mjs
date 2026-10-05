@@ -364,6 +364,12 @@ const qr = await QRCode.toString(site.url, {
   color: { dark: '#000000', light: '#ffffff' }
 })
 writeFileSync('qr.svg', qr)
+await QRCode.toFile('qr.png', site.url, {
+  width: 1200,
+  errorCorrectionLevel: 'Q',
+  margin: 2,
+  color: { dark: '#000000', light: '#ffffff' }
+})
 
 const card = `<div class="card">
   ${badge(92)}
@@ -406,4 +412,6 @@ ${card}
 `
 writeFileSync('cards.html', cards)
 
-console.log(`Built index.html with ${itemCount} menu entries in ${categories.length} sections, qr.svg and cards.html for ${site.url}`)
+console.log(
+  `Built index.html with ${itemCount} menu entries in ${categories.length} sections, qr.svg, qr.png and cards.html for ${site.url}`
+)

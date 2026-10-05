@@ -14,6 +14,10 @@ Live page: https://jenzy-lounge.github.io/
 
 Edit `site.json`, then build, commit and push as above.
 
+## QR code
+
+`qr.png` (1200 px) and `qr.svg` hold the QR code on its own, for stickers, posters or social media. They are rebuilt by `npm run build` and always point at the live page address.
+
 ## Table cards
 
 `table-cards.pdf` is an A4 sheet with four cards. Print it on card stock and cut along the dashed lines. To regenerate it after a build:
