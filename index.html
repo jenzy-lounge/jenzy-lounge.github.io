@@ -160,12 +160,50 @@ footer a { color: var(--ink); font-weight: 600; text-decoration-color: var(--gol
       if (active) rail.scrollLeft = chip.offsetLeft - (rail.clientWidth - chip.offsetWidth) / 2;
     });
   };
-  if ('IntersectionObserver' in window) {
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) { if (entry.isIntersecting) setActive(entry.target.id); });
-    }, { rootMargin: '-125px 0px -70% 0px' });
-    sections.forEach(function (section) { observer.observe(section); });
-  }
+  var bar = document.querySelector('.bar');
+  var tops = [];
+  var barHeight = 0;
+  var pinned = false;
+  var queued = false;
+  var measure = function () {
+    barHeight = bar.offsetHeight;
+    tops = sections.map(function (section) { return section.hidden ? Infinity : section.offsetTop; });
+  };
+  var spy = function () {
+    queued = false;
+    if (pinned) return;
+    var line = window.scrollY + barHeight + 48;
+    var id = '';
+    var last = '';
+    for (var i = 0; i < sections.length; i += 1) {
+      if (tops[i] === Infinity) continue;
+      last = sections[i].id;
+      if (!id || tops[i] <= line) id = sections[i].id;
+    }
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) id = last;
+    if (id) setActive(id);
+  };
+  var requestSpy = function () {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(spy);
+  };
+  var release = function () { pinned = false; };
+  window.addEventListener('scroll', requestSpy, { passive: true });
+  window.addEventListener('touchstart', release, { passive: true });
+  window.addEventListener('wheel', release, { passive: true });
+  window.addEventListener('keydown', release);
+  window.addEventListener('resize', function () { measure(); requestSpy(); });
+  window.addEventListener('load', function () { measure(); requestSpy(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { measure(); requestSpy(); });
+  chips.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      pinned = true;
+      setActive(chip.getAttribute('data-chip'));
+    });
+  });
+  measure();
+  spy();
 
   var input = document.getElementById('q');
   var empty = document.getElementById('empty');
@@ -184,6 +222,8 @@ footer a { color: var(--ink); font-weight: 600; text-decoration-color: var(--gol
       if (shown) any = true;
     });
     empty.hidden = any;
+    measure();
+    requestSpy();
   });
 })();
 </script>
