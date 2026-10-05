@@ -215,19 +215,28 @@ main { padding-block: 8px 28px; }
 .includes li { padding-left: 16px; position: relative; }
 .includes li::before { content: ''; position: absolute; left: 2px; top: 0.58em; width: 6px; height: 6px; border-radius: 50%; background: var(--yellow); }
 .empty { padding: 40px 0; text-align: center; color: var(--muted); }
-footer { border-top: 1px solid var(--line); padding-block: 26px calc(34px + env(safe-area-inset-bottom, 0px)); color: var(--muted); font-size: 15px; }
-footer .wrap { display: flex; flex-direction: column; gap: 14px; }
-footer h2 { margin: 0; font-family: var(--display); font-weight: 400; font-size: 26px; color: var(--yellow); }
-footer dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; }
-footer dt { color: var(--ink); font-weight: 600; }
-footer dd { margin: 0; }
-footer a { color: var(--ink); font-weight: 600; text-decoration-color: var(--gold); text-underline-offset: 3px; }
-.fine { font-size: 13px; }
+footer { margin-top: 12px; border-top: 1px solid var(--line); background: #0a0a09; padding-block: 30px calc(32px + env(safe-area-inset-bottom, 0px)); color: var(--muted); font-size: 15px; }
+.foot-brand { display: flex; align-items: center; gap: 14px; }
+.foot-brand svg { flex: none; }
+.foot-name strong { display: block; font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1; color: var(--yellow); letter-spacing: 1px; }
+.slogan { display: block; margin-top: 4px; font-family: var(--display); font-size: 21px; line-height: 1; color: var(--ink); }
+.heart { color: var(--red); }
+.foot-grid { display: grid; gap: 14px; margin-top: 24px; }
+@media (min-width: 620px) { .foot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .foot-block:last-child { grid-column: 1 / -1; } }
+.foot-block { min-width: 0; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 10px; }
+.foot-block h2 { margin: 0; font-family: var(--body); font-weight: 700; font-size: 12.5px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--gold); }
+.foot-block p { margin: 0; color: var(--ink); line-height: 1.45; }
+.foot-block .status { align-self: flex-start; }
+.foot-link { align-self: flex-start; color: var(--yellow); font-weight: 700; text-decoration: none; border-bottom: 2px solid rgba(255, 210, 31, 0.45); padding-bottom: 1px; }
+.foot-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+.foot-actions .btn { flex: 1 1 200px; justify-content: center; }
+.foot-bottom { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 18px; font-size: 13px; }
+.foot-bottom a { color: var(--ink); font-weight: 700; text-decoration: none; white-space: nowrap; }
 [hidden] { display: none !important; }
 </style>
 </head>
 <body>
-<header class="hero wrap">
+<header class="hero wrap" id="top">
   ${badge(108)}
   <h1>${escape(site.name)}<span>${escape(site.suffix)}</span></h1>
   <p class="tagline">${escape(site.tagline)}</p>
@@ -247,28 +256,50 @@ footer a { color: var(--ink); font-weight: 600; text-decoration-color: var(--gol
 ${sections}
 <p class="empty" id="empty" hidden>Nothing on the menu matches that. Try another word.</p>
 </main>
-<footer>
+<footer id="visit">
   <div class="wrap">
-    <h2>Visit or order</h2>
-    <dl>
-      <dt>Address</dt><dd>${escape(site.address)}</dd>
-      <dt>Hours</dt><dd>${escape(site.hoursLabel)}</dd>
-      <dt>WhatsApp</dt><dd><a href="https://wa.me/${international(site.whatsapp)}">${escape(site.whatsapp)}</a></dd>
-      <dt>Phone</dt><dd><a href="tel:${digits(site.phone)}">${escape(site.phone)}</a></dd>
-    </dl>
-    <p class="fine">Prices are in Pakistani rupees and may change. Menu updated ${escape(updated)}.</p>
+    <div class="foot-brand">
+      ${badge(64)}
+      <div class="foot-name"><strong>${escape(site.name)} ${escape(site.suffix)}</strong><span class="slogan"><span class="heart">&#9829;</span> Taste you'll love</span></div>
+    </div>
+    <div class="foot-grid">
+      <section class="foot-block">
+        <h2>Find us</h2>
+        <p>${escape(site.address)}</p>
+        <a class="foot-link" href="https://www.google.com/maps/search/?api=1&amp;query=${encodeURIComponent(`${site.name} ${site.suffix}, ${site.address}`)}">Open in Google Maps</a>
+      </section>
+      <section class="foot-block">
+        <h2>Hours</h2>
+        <p>${escape(site.hoursLabel)}</p>
+        <span class="status"><i></i><span>Open ${escape(site.hoursLabel)}</span></span>
+      </section>
+      <section class="foot-block">
+        <h2>Order or reserve</h2>
+        <p>Call or message us for takeaway, delivery and table bookings.</p>
+        <div class="foot-actions">
+          <a class="btn primary" href="https://wa.me/${international(site.whatsapp)}">WhatsApp <small>${escape(site.whatsapp)}</small></a>
+          <a class="btn" href="tel:${digits(site.phone)}">Call <small>${escape(site.phone)}</small></a>
+        </div>
+      </section>
+    </div>
+    <div class="foot-bottom">
+      <span>Prices in Pakistani rupees and may change. Menu updated ${escape(updated)}.</span>
+      <a href="#top">Back to top &#8593;</a>
+    </div>
   </div>
 </footer>
 <script>
 (function () {
   var opensAt = ${Number(site.opensAt)}, closesAt = ${Number(site.closesAt)}, zone = ${JSON.stringify(site.timeZone)};
-  var status = document.getElementById('status');
+  var pills = Array.prototype.slice.call(document.querySelectorAll('.status'));
   try {
     var hour = Number(new Intl.DateTimeFormat('en-GB', { hour: 'numeric', hourCycle: 'h23', timeZone: zone }).format(new Date()));
     var open = opensAt < closesAt ? hour >= opensAt && hour < closesAt : hour >= opensAt || hour < closesAt;
     var clock = function (h) { return (h % 12 || 12) + (h < 12 ? ' am' : ' pm'); };
-    status.classList.add(open ? 'open' : 'closed');
-    status.lastElementChild.textContent = open ? 'Open now, until ' + clock(closesAt) : 'Closed now, opens ' + clock(opensAt);
+    pills.forEach(function (pill) {
+      pill.classList.add(open ? 'open' : 'closed');
+      pill.lastElementChild.textContent = open ? 'Open now, until ' + clock(closesAt) : 'Closed now, opens ' + clock(opensAt);
+    });
   } catch (error) {}
 
   var chips = Array.prototype.slice.call(document.querySelectorAll('[data-chip]'));

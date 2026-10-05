@@ -76,19 +76,28 @@ main { padding-block: 8px 28px; }
 .includes li { padding-left: 16px; position: relative; }
 .includes li::before { content: ''; position: absolute; left: 2px; top: 0.58em; width: 6px; height: 6px; border-radius: 50%; background: var(--yellow); }
 .empty { padding: 40px 0; text-align: center; color: var(--muted); }
-footer { border-top: 1px solid var(--line); padding-block: 26px calc(34px + env(safe-area-inset-bottom, 0px)); color: var(--muted); font-size: 15px; }
-footer .wrap { display: flex; flex-direction: column; gap: 14px; }
-footer h2 { margin: 0; font-family: var(--display); font-weight: 400; font-size: 26px; color: var(--yellow); }
-footer dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; }
-footer dt { color: var(--ink); font-weight: 600; }
-footer dd { margin: 0; }
-footer a { color: var(--ink); font-weight: 600; text-decoration-color: var(--gold); text-underline-offset: 3px; }
-.fine { font-size: 13px; }
+footer { margin-top: 12px; border-top: 1px solid var(--line); background: #0a0a09; padding-block: 30px calc(32px + env(safe-area-inset-bottom, 0px)); color: var(--muted); font-size: 15px; }
+.foot-brand { display: flex; align-items: center; gap: 14px; }
+.foot-brand svg { flex: none; }
+.foot-name strong { display: block; font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1; color: var(--yellow); letter-spacing: 1px; }
+.slogan { display: block; margin-top: 4px; font-family: var(--display); font-size: 21px; line-height: 1; color: var(--ink); }
+.heart { color: var(--red); }
+.foot-grid { display: grid; gap: 14px; margin-top: 24px; }
+@media (min-width: 620px) { .foot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .foot-block:last-child { grid-column: 1 / -1; } }
+.foot-block { min-width: 0; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 10px; }
+.foot-block h2 { margin: 0; font-family: var(--body); font-weight: 700; font-size: 12.5px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--gold); }
+.foot-block p { margin: 0; color: var(--ink); line-height: 1.45; }
+.foot-block .status { align-self: flex-start; }
+.foot-link { align-self: flex-start; color: var(--yellow); font-weight: 700; text-decoration: none; border-bottom: 2px solid rgba(255, 210, 31, 0.45); padding-bottom: 1px; }
+.foot-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+.foot-actions .btn { flex: 1 1 200px; justify-content: center; }
+.foot-bottom { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 18px; font-size: 13px; }
+.foot-bottom a { color: var(--ink); font-weight: 700; text-decoration: none; white-space: nowrap; }
 [hidden] { display: none !important; }
 </style>
 </head>
 <body>
-<header class="hero wrap">
+<header class="hero wrap" id="top">
   <svg width="108" height="108" viewBox="0 0 200 200" role="img" aria-label="JENZY logo"><circle cx="100" cy="100" r="98" fill="#0d0d0b"/><circle cx="100" cy="100" r="92" fill="none" stroke="#f2b705" stroke-width="3"/><g fill="none" stroke="#f2b705" stroke-width="5" stroke-linejoin="round" transform="translate(74 22) scale(0.43)"><path d="M60 4c-9 0-16 5-19 12-3-1-6-2-9-2C21 14 12 22 12 33c0 9 6 16 14 18v20h68V51c8-2 14-9 14-18 0-11-9-19-20-19-3 0-6 1-9 2C76 9 69 4 60 4z"/><path d="M26 82h68"/></g><text x="100" y="128" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="72" fill="#f2b705">JZ</text><text x="100" y="160" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="19" letter-spacing="5" fill="#f2b705">JENZY</text></svg>
   <h1>JENZY<span>Lounge</span></h1>
   <p class="tagline">Restaurant · Fast Food · BBQ · Desi Flavours</p>
@@ -123,28 +132,50 @@ footer a { color: var(--ink); font-weight: 600; text-decoration-color: var(--gol
 <section id="cold-drinks" class="category"><h2>Cold Drinks</h2><ul class="items"><li class="item" data-search="cold drink "><h3>Cold Drink</h3><ul class="sizes"><li><span>345 ml</span><span class="dots"></span><span class="price">Rs 100</span></li><li><span>500 ml</span><span class="dots"></span><span class="price">Rs 150</span></li><li><span>1 Litre</span><span class="dots"></span><span class="price">Rs 200</span></li><li><span>1.5 Litre</span><span class="dots"></span><span class="price">Rs 250</span></li></ul></li><li class="item" data-search="water "><h3>Water</h3><ul class="sizes"><li><span>500 ml</span><span class="dots"></span><span class="price">Rs 60</span></li><li><span>1.5 Litre</span><span class="dots"></span><span class="price">Rs 120</span></li></ul></li></ul></section>
 <p class="empty" id="empty" hidden>Nothing on the menu matches that. Try another word.</p>
 </main>
-<footer>
+<footer id="visit">
   <div class="wrap">
-    <h2>Visit or order</h2>
-    <dl>
-      <dt>Address</dt><dd>UMT Road, near Masjid-e-Aqsa, Joher Town, Lahore</dd>
-      <dt>Hours</dt><dd>11 am to 2 am, every day</dd>
-      <dt>WhatsApp</dt><dd><a href="https://wa.me/923063636272">0306 3636272</a></dd>
-      <dt>Phone</dt><dd><a href="tel:03279686607">0327 9686607</a></dd>
-    </dl>
-    <p class="fine">Prices are in Pakistani rupees and may change. Menu updated 6 October 2026.</p>
+    <div class="foot-brand">
+      <svg width="64" height="64" viewBox="0 0 200 200" role="img" aria-label="JENZY logo"><circle cx="100" cy="100" r="98" fill="#0d0d0b"/><circle cx="100" cy="100" r="92" fill="none" stroke="#f2b705" stroke-width="3"/><g fill="none" stroke="#f2b705" stroke-width="5" stroke-linejoin="round" transform="translate(74 22) scale(0.43)"><path d="M60 4c-9 0-16 5-19 12-3-1-6-2-9-2C21 14 12 22 12 33c0 9 6 16 14 18v20h68V51c8-2 14-9 14-18 0-11-9-19-20-19-3 0-6 1-9 2C76 9 69 4 60 4z"/><path d="M26 82h68"/></g><text x="100" y="128" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="72" fill="#f2b705">JZ</text><text x="100" y="160" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="19" letter-spacing="5" fill="#f2b705">JENZY</text></svg>
+      <div class="foot-name"><strong>JENZY Lounge</strong><span class="slogan"><span class="heart">&#9829;</span> Taste you'll love</span></div>
+    </div>
+    <div class="foot-grid">
+      <section class="foot-block">
+        <h2>Find us</h2>
+        <p>UMT Road, near Masjid-e-Aqsa, Joher Town, Lahore</p>
+        <a class="foot-link" href="https://www.google.com/maps/search/?api=1&amp;query=JENZY%20Lounge%2C%20UMT%20Road%2C%20near%20Masjid-e-Aqsa%2C%20Joher%20Town%2C%20Lahore">Open in Google Maps</a>
+      </section>
+      <section class="foot-block">
+        <h2>Hours</h2>
+        <p>11 am to 2 am, every day</p>
+        <span class="status"><i></i><span>Open 11 am to 2 am, every day</span></span>
+      </section>
+      <section class="foot-block">
+        <h2>Order or reserve</h2>
+        <p>Call or message us for takeaway, delivery and table bookings.</p>
+        <div class="foot-actions">
+          <a class="btn primary" href="https://wa.me/923063636272">WhatsApp <small>0306 3636272</small></a>
+          <a class="btn" href="tel:03279686607">Call <small>0327 9686607</small></a>
+        </div>
+      </section>
+    </div>
+    <div class="foot-bottom">
+      <span>Prices in Pakistani rupees and may change. Menu updated 6 October 2026.</span>
+      <a href="#top">Back to top &#8593;</a>
+    </div>
   </div>
 </footer>
 <script>
 (function () {
   var opensAt = 11, closesAt = 2, zone = "Asia/Karachi";
-  var status = document.getElementById('status');
+  var pills = Array.prototype.slice.call(document.querySelectorAll('.status'));
   try {
     var hour = Number(new Intl.DateTimeFormat('en-GB', { hour: 'numeric', hourCycle: 'h23', timeZone: zone }).format(new Date()));
     var open = opensAt < closesAt ? hour >= opensAt && hour < closesAt : hour >= opensAt || hour < closesAt;
     var clock = function (h) { return (h % 12 || 12) + (h < 12 ? ' am' : ' pm'); };
-    status.classList.add(open ? 'open' : 'closed');
-    status.lastElementChild.textContent = open ? 'Open now, until ' + clock(closesAt) : 'Closed now, opens ' + clock(opensAt);
+    pills.forEach(function (pill) {
+      pill.classList.add(open ? 'open' : 'closed');
+      pill.lastElementChild.textContent = open ? 'Open now, until ' + clock(closesAt) : 'Closed now, opens ' + clock(opensAt);
+    });
   } catch (error) {}
 
   var chips = Array.prototype.slice.call(document.querySelectorAll('[data-chip]'));
