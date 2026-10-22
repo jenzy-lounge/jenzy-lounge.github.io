@@ -26,4 +26,8 @@ Edit `site.json`, then build, commit and push as above.
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --no-pdf-header-footer --virtual-time-budget=5000 --print-to-pdf=table-cards.pdf "file://$PWD/cards.html"
 ```
 
+## QR code designs
+
+`qr-designs.pdf` is an A4 sheet with six styled versions of the same code (square, dots, rounded, yellow, yellow-on-black and a round badge), each with the JZ chef-hat badge in the middle. The single codes are in `qr-designs/` as SVG files for stickers, posters or social media, and `qr-designs/1-classic.pdf` to `6-circle.pdf` are ready-to-print A4 sheets with four table cards in each style. Regenerate them with `node qr-designs.mjs`, then print the sheet the same way as the table cards, with `qr-designs.html` and `qr-designs.pdf` in place of `cards.html` and `table-cards.pdf`. The codes use the highest error correction level so the badge does not stop them scanning; do not make the badge bigger.
+
 The QR code holds the live page address from `site.json`. If the café moves to its own domain, set it up in the repository's Pages settings; GitHub forwards the old address, so printed cards keep working.
