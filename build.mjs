@@ -141,26 +141,58 @@ const featured = JSON.parse(readFileSync('featured.json', 'utf8')).map((dish, in
   return { ...dish, title: dish.title ?? dish.name, price, number: String(index + 1).padStart(2, '0'), total: String(list.length).padStart(2, '0') }
 })
 
-const showHtml = featured
-  .map(
-    (dish, index) => `<section class="dish" id="dish-${dish.number}" aria-label="${escape(dish.title)}">
-  <div class="dish-glow"></div>
-  <div class="dish-inner">
-    <div class="dish-info">
-      <p class="dish-num"><span>${dish.number}</span> / ${dish.total}</p>
-      <p class="dish-kicker">${escape(dish.kicker)}</p>
-      <h2 class="dish-title">${escape(dish.title)}</h2>
-      <p class="dish-text">${escape(dish.text)}</p>
-      <div class="dish-buy"><span class="dish-price">${escape(dish.price)}</span><a class="dish-order" href="https://wa.me/${international(site.whatsapp)}?text=${encodeURIComponent(`Hi ${site.name}, I'd like to order: ${dish.title}`)}">Order on WhatsApp</a></div>
+const embers = Array.from({ length: 16 }, (_, k) => {
+  const x = (k * 61) % 100
+  const d = 7 + ((k * 37) % 6)
+  const t = -((k * 1.3) % d)
+  const dx = ((k * 29) % 60) - 30
+  return `<i style="--x:${x}%;--d:${d}s;--t:${t.toFixed(1)}s;--dx:${dx}px"></i>`
+}).join('')
+
+const showHtml = `<div class="stage">
+  <div class="embers" aria-hidden="true">${embers}</div>
+  ${featured
+    .map(
+      (dish, index) => `<section class="dish${index === 0 ? ' on' : ''}" id="dish-${dish.number}" aria-label="${escape(dish.title)}">
+    <div class="dish-glow"></div>
+    <div class="dish-inner">
+      <div class="dish-info">
+        <p class="dish-num"><span>${dish.number}</span> / ${dish.total}</p>
+        <p class="dish-kicker">${escape(dish.kicker)}</p>
+        <h2 class="dish-title">${escape(dish.title)}</h2>
+        <p class="dish-text">${escape(dish.text)}</p>
+        <div class="dish-buy"><span class="dish-price">${escape(dish.price)}</span><a class="dish-order" href="https://wa.me/${international(site.whatsapp)}?text=${encodeURIComponent(`Hi ${site.name}, I'd like to order: ${dish.title}`)}">Order on WhatsApp</a></div>
+      </div>
+      <div class="dish-stage">
+        <div class="dish-pics">
+          <img class="pic-whole" src="${escape(dish.image)}" alt="${escape(dish.title)}" width="900" height="900" ${index < 1 ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async">
+          <img class="pic-burst" src="${escape(dish.image.replace(/\.webp$/, '-burst.webp'))}" alt="" width="900" height="900" loading="lazy" decoding="async">
+        </div>
+        <p class="dish-word" style="--len:${dish.word.length}"><span>${escape(dish.word)}</span></p>
+      </div>
     </div>
-    <div class="dish-stage">
-      <img src="${escape(dish.image)}" alt="${escape(dish.title)}" width="900" height="900" ${index < 1 ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async">
-      <p class="dish-word" style="--len:${dish.word.length}">${escape(dish.word)}</p>
-    </div>
-  </div>
-</section>`
-  )
-  .join('\n')
+  </section>`
+    )
+    .join('\n  ')}
+  <ol class="stage-list" aria-hidden="true">${featured.map((dish) => `<li><b>${dish.number}</b>${escape(dish.title)}</li>`).join('')}</ol>
+  <p class="stage-hint" aria-hidden="true">Scroll to serve the next dish <span>&#8595;</span></p>
+  <div class="stage-bar" aria-hidden="true"><i id="stage-fill"></i></div>
+</div>`
+
+const tickerWords = featured.map((dish) => dish.title)
+const tickerHtml = [...tickerWords, ...tickerWords]
+  .map((word, k) => `<span class="${k % 2 ? 'hollow' : ''}">${escape(word)}</span><b>&#10022;</b>`)
+  .join('')
+
+const storyWords = 'Every order at Jenzy is cooked when you order it. Burgers are smashed on a hot griddle, shawarma is toasted until it crackles, tikka is charred over the flame and the chai is boiled strong in milk. Then it comes to your table, hot.'
+  .split(' ')
+  .map((word) => {
+    const pics = { griddle: 'smash', crackles: 'shawarma', flame: 'fish', milk: 'chai' }
+    const key = word.replace(/[^a-z]/gi, '').toLowerCase()
+    const pic = pics[key] ? ` <img class="story-pic" src="img/${pics[key]}.webp" alt="" loading="lazy">` : ''
+    return `<span>${escape(word)}</span>${pic}`
+  })
+  .join(' ')
 
 const updated = new Intl.DateTimeFormat('en-GB', {
   day: 'numeric',
@@ -279,38 +311,91 @@ footer { margin-top: 12px; border-top: 1px solid var(--line); background: #0a0a0
 .dish-num span { font-size: 42px; color: var(--yellow); }
 .dish-kicker { order: 2; margin: 2px 0 0; font-size: 12.5px; font-weight: 700; letter-spacing: 2.4px; text-transform: uppercase; color: var(--gold); }
 .dish-stage { order: 3; position: relative; width: min(86vw, 44svh, 560px); display: grid; justify-items: center; }
-.dish-stage img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; -webkit-mask-image: radial-gradient(closest-side, #000 70%, transparent 100%); mask-image: radial-gradient(closest-side, #000 70%, transparent 100%); }
-.dish-word { margin: -0.42em 0 0; font-family: var(--display); font-weight: 400; font-size: min(calc(140vw / var(--len)), 22svh, 150px); line-height: 0.9; color: var(--yellow); letter-spacing: 1px; text-shadow: 0 6px 0 #8a6a00, 0 18px 40px rgba(255, 210, 31, 0.35); transform: rotate(-3deg); pointer-events: none; }
+.dish-pics { position: relative; width: 100%; aspect-ratio: 1; }
+.dish-pics img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; -webkit-mask-image: radial-gradient(closest-side, #000 70%, transparent 100%); mask-image: radial-gradient(closest-side, #000 70%, transparent 100%); }
+.pic-burst { display: none !important; }
+.dish-word { position: relative; margin: -0.42em 0 0; padding: 0 0.1em 0.12em; overflow: hidden; font-family: var(--display); font-weight: 400; font-size: min(calc(140vw / var(--len)), 22svh, 150px); line-height: 0.95; color: var(--yellow); letter-spacing: 1px; transform: rotate(-3deg); pointer-events: none; }
+.dish-word span { display: block; text-shadow: 0 6px 0 #8a6a00, 0 18px 40px rgba(255, 210, 31, 0.35); }
 .dish-title { order: 4; margin: 8px 0 0; font-size: 24px; font-weight: 700; line-height: 1.15; }
 .dish-text { order: 5; margin: 2px 0 0; max-width: 420px; color: var(--muted); font-size: 15px; line-height: 1.4; }
 .dish-buy { order: 6; margin-top: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 16px; }
 .dish-price { font-family: var(--display); font-size: 34px; line-height: 1; color: #14130f; background: var(--yellow); padding: 4px 14px 6px; border-radius: 6px 14px 8px 12px; transform: rotate(-2deg); }
 .dish-order { color: var(--yellow); font-weight: 700; text-decoration: none; border-bottom: 2px solid rgba(255, 210, 31, 0.45); padding-bottom: 1px; }
+.embers, .stage-list, .stage-hint, .stage-bar { display: none; }
 @media (min-width: 900px) {
-  .dish { padding-inline: 40px; }
+  .dish { padding: 70px 40px 40px; }
   .dish-inner { grid-template-columns: 360px 1fr; align-items: center; text-align: left; justify-items: start; gap: 0 40px; }
   .dish-info { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
   .dish-info > * { order: 0; }
   .dish-buy { justify-content: flex-start; }
-  .dish { padding-block: 70px 40px; }
   .dish-stage { justify-self: center; width: min(48vw, 66svh, 620px); }
   .dish-word { font-size: min(calc(150vw / var(--len)), 20svh, 170px); }
   .dish-glow { background: radial-gradient(45% 55% at 66% 50%, rgba(255, 210, 31, 0.16), rgba(255, 210, 31, 0) 70%); }
 }
-.js .dish .dish-stage img, .js .dish .dish-word, .js .dish .dish-info > *, .js .dish .dish-num, .js .dish .dish-kicker, .js .dish .dish-title, .js .dish .dish-text, .js .dish .dish-buy { opacity: 0; transition: opacity 0.7s ease, transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.js .dish .dish-stage img { transform: scale(0.86) translateY(30px); }
-.js .dish .dish-word { transform: translateY(40px) rotate(-3deg); transition-delay: 0.15s; }
-.js .dish .dish-title, .js .dish .dish-text, .js .dish .dish-buy { transform: translateY(16px); transition-delay: 0.25s; }
-.js .dish.in .dish-stage img, .js .dish.in .dish-word, .js .dish.in .dish-info > *, .js .dish.in .dish-num, .js .dish.in .dish-kicker, .js .dish.in .dish-title, .js .dish.in .dish-text, .js .dish.in .dish-buy { opacity: 1; }
-.js .dish.in .dish-stage img { transform: none; }
-.js .dish.in .dish-word { transform: rotate(-3deg); }
-.js .dish.in .dish-title, .js .dish.in .dish-text, .js .dish.in .dish-buy { transform: none; }
+.pin { height: calc(var(--n) * 120svh); }
+.pin .stage { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+.pin .dish { position: absolute; inset: 0; min-height: 0; border: 0; opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0s linear 0.5s; }
+.pin .dish.on { opacity: 1; visibility: visible; transition: opacity 0.5s ease; }
+.pin .pic-burst { display: block !important; }
+.pin .pic-whole { opacity: calc(1 - clamp(0, (var(--p, 0) - 0.3) * 3, 1)); transform: scale(calc(0.9 + var(--p, 0) * 0.1)); }
+.pin .pic-burst { opacity: clamp(0, (var(--p, 0) - 0.3) * 3, 1); transform: scale(calc(0.92 + var(--p, 0) * 0.16)) rotate(calc(var(--p, 0) * -4deg)); }
+.pin .dish-word span { transform: translateY(110%); transition: transform 0.75s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.pin .dish.on .dish-word span { transform: none; }
+.pin .dish.past .dish-word span { transform: translateY(-110%); }
+.pin .dish-num, .pin .dish-kicker, .pin .dish-title, .pin .dish-text, .pin .dish-buy { opacity: 0; transform: translateY(18px); transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.pin .dish.past .dish-num, .pin .dish.past .dish-kicker, .pin .dish.past .dish-title, .pin .dish.past .dish-text, .pin .dish.past .dish-buy { transform: translateY(-18px); }
+.pin .dish.on .dish-num, .pin .dish.on .dish-kicker, .pin .dish.on .dish-title, .pin .dish.on .dish-text, .pin .dish.on .dish-buy { opacity: 1; transform: none; }
+.pin .dish.on .dish-kicker { transition-delay: 0.05s; }
+.pin .dish.on .dish-title { transition-delay: 0.1s; }
+.pin .dish.on .dish-text { transition-delay: 0.15s; }
+.pin .dish.on .dish-buy { transition-delay: 0.2s; }
+.pin .dish.on .dish-price { transform: rotate(-2deg); }
+.pin .embers { display: block; position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+.embers i { position: absolute; bottom: -12px; left: var(--x); width: 4px; height: 4px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 10px 2px rgba(255, 190, 0, 0.7); opacity: 0; animation: rise var(--d) linear infinite; animation-delay: var(--t); }
+@keyframes rise { 0% { transform: translate(0, 0); opacity: 0; } 10% { opacity: 0.85; } 100% { transform: translate(var(--dx), -105svh); opacity: 0; } }
+.pin .stage-bar { display: block; position: absolute; right: 10px; top: 50%; width: 3px; height: 34svh; transform: translateY(-50%); background: var(--line); border-radius: 3px; overflow: hidden; z-index: 3; }
+.stage-bar i { position: absolute; inset: 0; background: var(--yellow); transform-origin: top; transform: scaleY(var(--s, 0)); }
+@media (min-width: 900px) {
+  .pin .stage-hint { display: block; position: absolute; left: 40px; bottom: 26px; margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 2.4px; text-transform: uppercase; color: var(--muted); z-index: 3; }
+  .stage-hint span { display: inline-block; color: var(--yellow); animation: nudge 1.6s ease-in-out infinite; }
+}
+@media (min-width: 1180px) {
+  .pin .stage-list { display: flex; flex-direction: column; gap: 9px; position: absolute; right: 34px; top: 50%; transform: translateY(-50%); margin: 0; padding: 0; list-style: none; z-index: 3; font-size: 12px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; color: #5f5b4f; }
+  .stage-list li { transition: color 0.3s ease, transform 0.3s ease; }
+  .stage-list b { display: inline-block; width: 26px; color: inherit; }
+  .stage-list li.on { color: var(--yellow); transform: translateX(-8px); }
+  .pin .stage-bar { right: 20px; }
+}
+.ticker { overflow: hidden; border-block: 1px solid var(--line); background: #0a0a09; padding: 14px 0; }
+.ticker-track { display: flex; align-items: center; gap: 22px; width: max-content; animation: slide 38s linear infinite; }
+.ticker span { font-family: var(--display); font-size: 40px; line-height: 1; color: var(--yellow); white-space: nowrap; }
+.ticker span.hollow { color: transparent; -webkit-text-stroke: 1.5px var(--yellow); }
+.ticker b { color: var(--gold); font-size: 20px; }
+@keyframes slide { to { transform: translateX(-50%); } }
+.story { padding-block: 80px; }
+.story-label { margin: 0 0 18px; font-size: 12.5px; font-weight: 700; letter-spacing: 2.4px; text-transform: uppercase; color: var(--gold); }
+.story-text { margin: 0; font-size: clamp(27px, 6.4vw, 46px); font-weight: 700; line-height: 1.22; letter-spacing: -0.3px; }
+.story-text span { color: #34322b; transition: color 0.35s ease; }
+.story-text span.lit { color: var(--ink); }
+.no-js .story-text span, .still .story-text span { color: var(--ink); }
+.story-pic { display: inline-block; width: 1.5em; height: 1em; object-fit: cover; border-radius: 999px; vertical-align: -0.12em; border: 2px solid var(--yellow); }
+.mask { padding: 30px 0 70px; text-align: center; overflow: hidden; }
+.mask-word { margin: 0; font-family: var(--display); font-size: 34vw; line-height: 0.85; color: var(--yellow); background-image: url(img/fries-burst.webp); background-size: calc(100% + var(--m, 0) * 60%); background-position: center; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 8px 30px rgba(255, 210, 31, 0.25)); }
+@media (min-width: 900px) { .mask-word { font-size: 280px; } }
+.mask p.slogan-big { margin: 10px 0 0; font-family: var(--display); font-size: 30px; color: var(--ink); }
+.loader { position: fixed; inset: 0; z-index: 50; display: none; place-items: center; background: var(--bg); transition: clip-path 0.8s cubic-bezier(0.7, 0, 0.2, 1); clip-path: inset(0 0 0 0); }
+.js .loader { display: grid; }
+.loader.done { clip-path: inset(0 0 100% 0); }
+.loader-in { display: grid; justify-items: center; gap: 12px; }
+.loader-count { font-family: var(--display); font-size: 64px; line-height: 1; color: var(--yellow); font-variant-numeric: tabular-nums; }
+.loader-line { width: 160px; height: 2px; background: var(--line); overflow: hidden; }
+.loader-line i { display: block; height: 100%; background: var(--yellow); transform-origin: left; transform: scaleX(var(--l, 0)); }
 .show-nav { position: fixed; left: 50%; top: calc(10px + env(safe-area-inset-top, 0px)); z-index: 6; transform: translate(-50%, -160%); transition: transform 0.35s ease; display: flex; align-items: center; gap: 4px; padding: 5px; border-radius: 999px; background: rgba(23, 23, 20, 0.92); border: 1px solid var(--line); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
 .show-nav.on { transform: translate(-50%, 0); }
 .show-nav span { white-space: nowrap; padding: 0 12px; font-family: var(--display); font-size: 20px; color: var(--yellow); font-variant-numeric: tabular-nums; }
 .show-nav a { padding: 9px 16px; border-radius: 999px; background: var(--yellow); color: #14130f; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
 .note { display: block; margin-top: 4px; }
-@media (prefers-reduced-motion: reduce) { .js .dish *, .show-nav, .hero .jump i { transition: none !important; animation: none !important; transform: none !important; opacity: 1 !important; } .js .dish .dish-word { transform: rotate(-3deg) !important; } }
+@media (prefers-reduced-motion: reduce) { .ticker-track, .embers i, .hero .jump i, .stage-hint span { animation: none !important; } .loader { display: none !important; } }
 [hidden] { display: none !important; }
 </style>
 </head>
@@ -324,11 +409,15 @@ footer { margin-top: 12px; border-top: 1px solid var(--line); background: #0a0a0
     <a class="btn primary" href="https://wa.me/${international(site.whatsapp)}">WhatsApp <small>${escape(site.whatsapp)}</small></a>
     <a class="btn" href="tel:${digits(site.phone)}">Call <small>${escape(site.phone)}</small></a>
   </div>
-  <a class="jump" href="#dish-01"><b>Scroll to taste</b>our favourites<i>&#8595;</i></a>
+  <a class="jump" href="#show"><b>Scroll to taste</b>our favourites<i>&#8595;</i></a>
 </header>
-<div class="show" id="show">
+<div class="loader" id="loader" aria-hidden="true"><div class="loader-in">${badge(84)}<span class="loader-count" id="loader-count">0%</span><span class="loader-line"><i id="loader-line"></i></span></div></div>
+<div class="show" id="show" style="--n:${featured.length}">
 ${showHtml}
 </div>
+<div class="ticker" aria-hidden="true"><div class="ticker-track">${tickerHtml}</div></div>
+<section class="story wrap" id="story"><p class="story-label">The Jenzy way</p><p class="story-text" id="story-text">${storyWords}</p></section>
+<section class="mask" id="mask"><p class="mask-word" aria-label="${escape(site.name)}">${escape(site.name)}</p><p class="slogan-big">Taste you'll love</p></section>
 <nav class="show-nav" id="show-nav" aria-label="Favourites"><span id="show-count">01 / ${String(featured.length).padStart(2, '0')}</span><a href="#menu">Full menu &#8595;</a></nav>
 <div class="bar" id="menu">
   <div class="wrap">
@@ -375,26 +464,94 @@ ${sections}
 <script>
 document.documentElement.classList.add('js');
 (function () {
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var loader = document.getElementById('loader');
+  var seen = false;
+  try { seen = sessionStorage.getItem('jz-loaded') === '1'; sessionStorage.setItem('jz-loaded', '1'); } catch (e) {}
+  if (reduce || seen) { loader.parentNode.removeChild(loader); }
+  else {
+    var countEl = document.getElementById('loader-count');
+    var line = document.getElementById('loader-line');
+    var first = document.querySelector('.pic-whole');
+    var ready = false;
+    var start = performance.now();
+    var markReady = function () { ready = true; };
+    if (first && !first.complete) { first.addEventListener('load', markReady); first.addEventListener('error', markReady); } else markReady();
+    var tick = function (now) {
+      var elapsed = now - start;
+      var target = ready ? 1 : 0.9;
+      var value = Math.min(target, elapsed / 1100);
+      if (elapsed > 2600) value = 1;
+      countEl.textContent = Math.round(value * 100) + '%';
+      line.style.setProperty('--l', value.toFixed(3));
+      if (value >= 1) {
+        setTimeout(function () { loader.classList.add('done'); }, 150);
+        setTimeout(function () { if (loader.parentNode) loader.parentNode.removeChild(loader); }, 1100);
+        return;
+      }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  var show = document.getElementById('show');
   var dishes = Array.prototype.slice.call(document.querySelectorAll('.dish'));
+  var listItems = Array.prototype.slice.call(document.querySelectorAll('.stage-list li'));
   var nav = document.getElementById('show-nav');
   var count = document.getElementById('show-count');
-  var show = document.getElementById('show');
-  if (!('IntersectionObserver' in window)) { dishes.forEach(function (d) { d.classList.add('in'); }); return; }
-  var reveal = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting) { entry.target.classList.add('in'); reveal.unobserve(entry.target); }
+  var fill = document.getElementById('stage-fill');
+  var story = document.getElementById('story-text');
+  var words = story ? Array.prototype.slice.call(story.querySelectorAll('span')) : [];
+  var mask = document.getElementById('mask');
+  var maskWord = mask ? mask.querySelector('.mask-word') : null;
+  var total = String(dishes.length).padStart(2, '0');
+  if (reduce) { document.documentElement.classList.add('still'); dishes.forEach(function (d) { d.classList.add('on'); }); return; }
+  show.classList.add('pin');
+  var active = -1;
+  var lit = -1;
+  var pending = false;
+  var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  var setActive = function (index) {
+    if (index === active) return;
+    active = index;
+    dishes.forEach(function (d, k) { d.classList.toggle('on', k === index); d.classList.toggle('past', k < index); });
+    listItems.forEach(function (li, k) { li.classList.toggle('on', k === index); });
+    count.textContent = String(index + 1).padStart(2, '0') + ' / ' + total;
+  };
+  var frame = function () {
+    pending = false;
+    var vh = window.innerHeight;
+    var rect = show.getBoundingClientRect();
+    var span = show.offsetHeight - vh;
+    var progress = clamp(-rect.top / span, 0, 0.99999);
+    var t = progress * dishes.length;
+    var index = Math.floor(t);
+    setActive(index);
+    dishes[index].style.setProperty('--p', clamp((t - index) * 1.15, 0, 1).toFixed(3));
+    fill.style.setProperty('--s', progress.toFixed(3));
+    nav.classList.toggle('on', rect.top < -20 && rect.bottom > vh * 0.6);
+    if (story) {
+      var sr = story.getBoundingClientRect();
+      var sp = clamp((vh * 0.85 - sr.top) / (sr.height + vh * 0.35), 0, 1);
+      var upto = Math.round(sp * words.length) - 1;
+      if (upto !== lit) { words.forEach(function (w, k) { w.classList.toggle('lit', k <= upto); }); lit = upto; }
+    }
+    if (maskWord) {
+      var mr = mask.getBoundingClientRect();
+      maskWord.style.setProperty('--m', clamp(1 - (mr.top + mr.height) / (vh + mr.height), 0, 1).toFixed(3));
+    }
+  };
+  var request = function () { if (!pending) { pending = true; requestAnimationFrame(frame); } };
+  window.addEventListener('scroll', request, { passive: true });
+  window.addEventListener('resize', request);
+  listItems.forEach(function (li, k) {
+    li.style.cursor = 'pointer';
+    li.addEventListener('click', function () {
+      var span = show.offsetHeight - window.innerHeight;
+      window.scrollTo({ top: show.getBoundingClientRect().top + window.scrollY + span * ((k + 0.05) / dishes.length), behavior: 'smooth' });
     });
-  }, { threshold: 0.18 });
-  var current = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting) count.textContent = entry.target.id.replace('dish-', '') + ' / ' + String(dishes.length).padStart(2, '0');
-    });
-  }, { rootMargin: '-50% 0px -50% 0px' });
-  var inside = new IntersectionObserver(function (entries) {
-    nav.classList.toggle('on', entries[0].isIntersecting);
-  }, { rootMargin: '-35% 0px -35% 0px' });
-  dishes.forEach(function (d) { reveal.observe(d); current.observe(d); });
-  inside.observe(show);
+  });
+  frame();
 })();
 (function () {
   var opensAt = ${Number(site.opensAt)}, closesAt = ${Number(site.closesAt)}, zone = ${JSON.stringify(site.timeZone)};

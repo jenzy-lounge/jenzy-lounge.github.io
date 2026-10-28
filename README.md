@@ -12,7 +12,7 @@ Live page: https://jenzy-lounge.github.io/
 
 ## Favourite dishes at the top
 
-`featured.json` lists the dishes shown full screen at the top of the page, one per screen, with the picture in `img/`, the big word, a short line and the section name. `name` must match a row in `menu.csv` exactly; the price comes from there, so it stays in step. Pictures should be square WebP files about 900 px wide on a black background.
+`featured.json` lists the dishes shown full screen at the top of the page, one per screen, with the picture in `img/`, the big word, a short line and the section name. `name` must match a row in `menu.csv` exactly; the price comes from there, so it stays in step. Pictures should be square WebP files about 900 px wide on a black background. Each dish also needs a second picture with the same name plus `-burst` (for example `img/zinger-burst.webp`), showing the dish bursting apart; the page fades into it as you scroll.
 
 ## Change the address, hours or phone numbers
 
