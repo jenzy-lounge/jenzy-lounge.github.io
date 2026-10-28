@@ -29,7 +29,7 @@
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
-html { scroll-padding-top: 118px; }
+.category { scroll-margin-top: 118px; }
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.45; -webkit-text-size-adjust: 100%; }
 a { color: inherit; }
 .wrap { max-width: 720px; margin: 0 auto; padding-inline: 18px; }
@@ -93,6 +93,52 @@ footer { margin-top: 12px; border-top: 1px solid var(--line); background: #0a0a0
 .foot-actions .btn { flex: 1 1 200px; justify-content: center; }
 .foot-bottom { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 18px; font-size: 13px; }
 .foot-bottom a { color: var(--ink); font-weight: 700; text-decoration: none; white-space: nowrap; }
+.hero .jump { margin-top: 6px; display: inline-flex; flex-direction: column; align-items: center; gap: 2px; color: var(--muted); font-size: 13px; letter-spacing: 1.4px; text-transform: uppercase; text-decoration: none; }
+.hero .jump b { font-family: var(--display); font-weight: 400; font-size: 24px; letter-spacing: 0.5px; text-transform: none; color: var(--yellow); }
+.hero .jump i { font-style: normal; animation: nudge 1.6s ease-in-out infinite; color: var(--yellow); font-size: 20px; }
+@keyframes nudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+.show { position: relative; border-top: 1px solid var(--line); }
+.dish { position: relative; min-height: 100svh; display: grid; place-items: center; padding: 64px 18px 28px; overflow: hidden; }
+.dish + .dish { border-top: 1px solid #1b1a16; }
+.dish-glow { position: absolute; inset: 0; background: radial-gradient(60% 45% at 50% 52%, rgba(255, 210, 31, 0.16), rgba(255, 210, 31, 0) 70%); pointer-events: none; }
+.dish-inner { position: relative; width: 100%; max-width: 1120px; display: grid; justify-items: center; text-align: center; gap: 6px; }
+.dish-info { display: contents; }
+.dish-num { order: 1; margin: 0; font-family: var(--display); font-size: 22px; color: var(--muted); line-height: 1; }
+.dish-num span { font-size: 42px; color: var(--yellow); }
+.dish-kicker { order: 2; margin: 2px 0 0; font-size: 12.5px; font-weight: 700; letter-spacing: 2.4px; text-transform: uppercase; color: var(--gold); }
+.dish-stage { order: 3; position: relative; width: min(86vw, 44svh, 560px); display: grid; justify-items: center; }
+.dish-stage img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; -webkit-mask-image: radial-gradient(closest-side, #000 70%, transparent 100%); mask-image: radial-gradient(closest-side, #000 70%, transparent 100%); }
+.dish-word { margin: -0.42em 0 0; font-family: var(--display); font-weight: 400; font-size: min(calc(140vw / var(--len)), 22svh, 150px); line-height: 0.9; color: var(--yellow); letter-spacing: 1px; text-shadow: 0 6px 0 #8a6a00, 0 18px 40px rgba(255, 210, 31, 0.35); transform: rotate(-3deg); pointer-events: none; }
+.dish-title { order: 4; margin: 8px 0 0; font-size: 24px; font-weight: 700; line-height: 1.15; }
+.dish-text { order: 5; margin: 2px 0 0; max-width: 420px; color: var(--muted); font-size: 15px; line-height: 1.4; }
+.dish-buy { order: 6; margin-top: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 16px; }
+.dish-price { font-family: var(--display); font-size: 34px; line-height: 1; color: #14130f; background: var(--yellow); padding: 4px 14px 6px; border-radius: 6px 14px 8px 12px; transform: rotate(-2deg); }
+.dish-order { color: var(--yellow); font-weight: 700; text-decoration: none; border-bottom: 2px solid rgba(255, 210, 31, 0.45); padding-bottom: 1px; }
+@media (min-width: 900px) {
+  .dish { padding-inline: 40px; }
+  .dish-inner { grid-template-columns: 360px 1fr; align-items: center; text-align: left; justify-items: start; gap: 0 40px; }
+  .dish-info { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+  .dish-info > * { order: 0; }
+  .dish-buy { justify-content: flex-start; }
+  .dish { padding-block: 70px 40px; }
+  .dish-stage { justify-self: center; width: min(48vw, 66svh, 620px); }
+  .dish-word { font-size: min(calc(150vw / var(--len)), 20svh, 170px); }
+  .dish-glow { background: radial-gradient(45% 55% at 66% 50%, rgba(255, 210, 31, 0.16), rgba(255, 210, 31, 0) 70%); }
+}
+.js .dish .dish-stage img, .js .dish .dish-word, .js .dish .dish-info > *, .js .dish .dish-num, .js .dish .dish-kicker, .js .dish .dish-title, .js .dish .dish-text, .js .dish .dish-buy { opacity: 0; transition: opacity 0.7s ease, transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.js .dish .dish-stage img { transform: scale(0.86) translateY(30px); }
+.js .dish .dish-word { transform: translateY(40px) rotate(-3deg); transition-delay: 0.15s; }
+.js .dish .dish-title, .js .dish .dish-text, .js .dish .dish-buy { transform: translateY(16px); transition-delay: 0.25s; }
+.js .dish.in .dish-stage img, .js .dish.in .dish-word, .js .dish.in .dish-info > *, .js .dish.in .dish-num, .js .dish.in .dish-kicker, .js .dish.in .dish-title, .js .dish.in .dish-text, .js .dish.in .dish-buy { opacity: 1; }
+.js .dish.in .dish-stage img { transform: none; }
+.js .dish.in .dish-word { transform: rotate(-3deg); }
+.js .dish.in .dish-title, .js .dish.in .dish-text, .js .dish.in .dish-buy { transform: none; }
+.show-nav { position: fixed; left: 50%; top: calc(10px + env(safe-area-inset-top, 0px)); z-index: 6; transform: translate(-50%, -160%); transition: transform 0.35s ease; display: flex; align-items: center; gap: 4px; padding: 5px; border-radius: 999px; background: rgba(23, 23, 20, 0.92); border: 1px solid var(--line); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
+.show-nav.on { transform: translate(-50%, 0); }
+.show-nav span { white-space: nowrap; padding: 0 12px; font-family: var(--display); font-size: 20px; color: var(--yellow); font-variant-numeric: tabular-nums; }
+.show-nav a { padding: 9px 16px; border-radius: 999px; background: var(--yellow); color: #14130f; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.note { display: block; margin-top: 4px; }
+@media (prefers-reduced-motion: reduce) { .js .dish *, .show-nav, .hero .jump i { transition: none !important; animation: none !important; transform: none !important; opacity: 1 !important; } .js .dish .dish-word { transform: rotate(-3deg) !important; } }
 [hidden] { display: none !important; }
 </style>
 </head>
@@ -106,8 +152,140 @@ footer { margin-top: 12px; border-top: 1px solid var(--line); background: #0a0a0
     <a class="btn primary" href="https://wa.me/923000136442">WhatsApp <small>0300 0136442</small></a>
     <a class="btn" href="tel:03420673712">Call <small>0342 0673712</small></a>
   </div>
+  <a class="jump" href="#dish-01"><b>Scroll to taste</b>our favourites<i>&#8595;</i></a>
 </header>
-<div class="bar">
+<div class="show" id="show">
+<section class="dish" id="dish-01" aria-label="Zinger Burger">
+  <div class="dish-glow"></div>
+  <div class="dish-inner">
+    <div class="dish-info">
+      <p class="dish-num"><span>01</span> / 08</p>
+      <p class="dish-kicker">Burgers</p>
+      <h2 class="dish-title">Zinger Burger</h2>
+      <p class="dish-text">A crunchy fried chicken fillet, melted cheese and our house sauce, stacked in a toasted sesame bun.</p>
+      <div class="dish-buy"><span class="dish-price">Rs 449</span><a class="dish-order" href="https://wa.me/923000136442?text=Hi%20JENZY%2C%20I'd%20like%20to%20order%3A%20Zinger%20Burger">Order on WhatsApp</a></div>
+    </div>
+    <div class="dish-stage">
+      <img src="img/zinger.webp" alt="Zinger Burger" width="900" height="900" fetchpriority="high" decoding="async">
+      <p class="dish-word" style="--len:6">Zinger</p>
+    </div>
+  </div>
+</section>
+<section class="dish" id="dish-02" aria-label="Double Smash Burger">
+  <div class="dish-glow"></div>
+  <div class="dish-inner">
+    <div class="dish-info">
+      <p class="dish-num"><span>02</span> / 08</p>
+      <p class="dish-kicker">Burgers</p>
+      <h2 class="dish-title">Double Smash Burger</h2>
+      <p class="dish-text">Two beef patties smashed hot on the griddle for crispy edges, with cheddar melting down every side.</p>
+      <div class="dish-buy"><span class="dish-price">Rs 949</span><a class="dish-order" href="https://wa.me/923000136442?text=Hi%20JENZY%2C%20I'd%20like%20to%20order%3A%20Double%20Smash%20Burger">Order on WhatsApp</a></div>
+    </div>
+    <div class="dish-stage">
+      <img src="img/smash.webp" alt="Double Smash Burger" width="900" height="900" loading="lazy" decoding="async">
+      <p class="dish-word" style="--len:5">Smash</p>
+    </div>
+  </div>
+</section>
+<section class="dish" id="dish-03" aria-label="Grilled Shawarma">
+  <div class="dish-glow"></div>
+  <div class="dish-inner">
+    <div class="dish-info">
+      <p class="dish-num"><span>03</span> / 08</p>
+      <p class="dish-kicker">Shawarma</p>
+      <h2 class="dish-title">Grilled Shawarma</h2>
+      <p class="dish-text">Grilled chicken, garlic sauce, pickles and fries, rolled tight and toasted until the wrap crackles.</p>
+      <div class="dish-buy"><span class="dish-price">Rs 449</span><a class="dish-order" href="https://wa.me/923000136442?text=Hi%20JENZY%2C%20I'd%20like%20to%20order%3A%20Grilled%20Shawarma">Order on WhatsApp</a></div>
+    </div>
+    <div class="dish-stage">
+      <img src="img/shawarma.webp" alt="Grilled Shawarma" width="900" height="900" loading="lazy" decoding="async">
+      <p class="dish-word" style="--len:8">Shawarma</p>
+    </div>
+  </div>
+</section>
+<section class="dish" id="dish-04" aria-label="Loaded Fries">
+  <div class="dish-glow"></div>
+  <div class="dish-inner">
+    <div class="dish-info">
+      <p class="dish-num"><span>04</span> / 08</p>
+      <p class="dish-kicker">Fries</p>
+      <h2 class="dish-title">Loaded Fries</h2>
+      <p class="dish-text">Golden fries buried under cheese sauce, crispy chicken, jalapenos and a garlic mayo drizzle.</p>
+      <div class="dish-buy"><span class="dish-price">Rs 599</span><a class="dish-order" href="https://wa.me/923000136442?text=Hi%20JENZY%2C%20I'd%20like%20to%20order%3A%20Loaded%20Fries">Order on WhatsApp</a></div>
+    </div>
+    <div class="dish-stage">
+      <img src="img/fries.webp" alt="Loaded Fries" width="900" height="900" loading="lazy" decoding="async">
+      <p class="dish-word" style="--len:6">Loaded</p>
+    </div>
+  </div>
+</section>
+<section class="dish" id="dish-05" aria-label="Alfredo Pasta">
+  <div class="dish-glow"></div>
+  <div class="dish-inner">
+    <div class="dish-info">
+      <p class="dish-num"><span>05</span> / 08</p>
+      <p class="dish-kicker">Pasta</p>
+      <h2 class="dish-title">Alfredo Pasta</h2>
+      <p class="dish-text">Ribbons of pasta in a silky cream and parmesan sauce, topped with grilled chicken.</p>
+      <div class="dish-buy"><span class="dish-price">Rs 799</span><a class="dish-order" href="https://wa.me/923000136442?text=Hi%20JENZY%2C%20I'd%20like%20to%20order%3A%20Alfredo%20Pasta">Order on WhatsApp</a></div>
+    </div>
+    <div class="dish-stage">
+      <img src="img/pasta.webp" alt="Alfredo Pasta" width="900" height="900" loading="lazy" decoding="async">
+      <p class="dish-word" style="--len:7">Alfredo</p>
+    </div>
+  </div>
+</section>
+<section class="dish" id="dish-06" aria-label="Boneless Fish Tikka">
+  <div class="dish-glow"></div>
+  <div class="dish-inner">
+    <div class="dish-info">
+      <p class="dish-num"><span>06</span> / 08</p>
+      <p class="dish-kicker">Fish</p>
+      <h2 class="dish-title">Boneless Fish Tikka</h2>
+      <p class="dish-text">Boneless fish in a red tikka masala, charred over the flame and served sizzling with mint chutney.</p>
+      <div class="dish-buy"><span class="dish-price">from Rs 799</span><a class="dish-order" href="https://wa.me/923000136442?text=Hi%20JENZY%2C%20I'd%20like%20to%20order%3A%20Boneless%20Fish%20Tikka">Order on WhatsApp</a></div>
+    </div>
+    <div class="dish-stage">
+      <img src="img/fish.webp" alt="Boneless Fish Tikka" width="900" height="900" loading="lazy" decoding="async">
+      <p class="dish-word" style="--len:5">Tikka</p>
+    </div>
+  </div>
+</section>
+<section class="dish" id="dish-07" aria-label="BBQ Wings">
+  <div class="dish-glow"></div>
+  <div class="dish-inner">
+    <div class="dish-info">
+      <p class="dish-num"><span>07</span> / 08</p>
+      <p class="dish-kicker">Starters</p>
+      <h2 class="dish-title">BBQ Wings</h2>
+      <p class="dish-text">Crispy wings tossed in a sticky, smoky glaze with sesame and spring onion.</p>
+      <div class="dish-buy"><span class="dish-price">from Rs 399</span><a class="dish-order" href="https://wa.me/923000136442?text=Hi%20JENZY%2C%20I'd%20like%20to%20order%3A%20BBQ%20Wings">Order on WhatsApp</a></div>
+    </div>
+    <div class="dish-stage">
+      <img src="img/wings.webp" alt="BBQ Wings" width="900" height="900" loading="lazy" decoding="async">
+      <p class="dish-word" style="--len:5">Wings</p>
+    </div>
+  </div>
+</section>
+<section class="dish" id="dish-08" aria-label="Doodh Patti Chai">
+  <div class="dish-glow"></div>
+  <div class="dish-inner">
+    <div class="dish-info">
+      <p class="dish-num"><span>08</span> / 08</p>
+      <p class="dish-kicker">Jenzy special</p>
+      <h2 class="dish-title">Doodh Patti Chai</h2>
+      <p class="dish-text">Strong tea boiled in milk with cardamom, poured from high for the froth. The way to end the night.</p>
+      <div class="dish-buy"><span class="dish-price">Rs 200</span><a class="dish-order" href="https://wa.me/923000136442?text=Hi%20JENZY%2C%20I'd%20like%20to%20order%3A%20Doodh%20Patti%20Chai">Order on WhatsApp</a></div>
+    </div>
+    <div class="dish-stage">
+      <img src="img/chai.webp" alt="Doodh Patti Chai" width="900" height="900" loading="lazy" decoding="async">
+      <p class="dish-word" style="--len:4">Chai</p>
+    </div>
+  </div>
+</section>
+</div>
+<nav class="show-nav" id="show-nav" aria-label="Favourites"><span id="show-count">01 / 08</span><a href="#menu">Full menu &#8595;</a></nav>
+<div class="bar" id="menu">
   <div class="wrap">
     <div class="search"><label class="sr" for="q" hidden>Search the menu</label><input id="q" type="search" inputmode="search" autocomplete="off" placeholder="Search 65 items, e.g. zinger, tikka, fries"></div>
     <nav class="chips" aria-label="Menu sections"><a href="#deals" data-chip="deals">Deals</a><a href="#starters" data-chip="starters">Starters</a><a href="#burgers" data-chip="burgers">Burgers</a><a href="#shawarma" data-chip="shawarma">Shawarma</a><a href="#wraps-and-rolls" data-chip="wraps-and-rolls">Wraps &amp; Rolls</a><a href="#sandwiches" data-chip="sandwiches">Sandwiches</a><a href="#fries" data-chip="fries">Fries</a><a href="#pasta" data-chip="pasta">Pasta</a><a href="#rice-bowls" data-chip="rice-bowls">Rice Bowls</a><a href="#fish" data-chip="fish">Fish</a><a href="#naan-and-sides" data-chip="naan-and-sides">Naan &amp; Sides</a><a href="#sauces" data-chip="sauces">Sauces</a><a href="#chai-and-lassi" data-chip="chai-and-lassi">Chai &amp; Lassi</a><a href="#cold-drinks" data-chip="cold-drinks">Cold Drinks</a></nav>
@@ -157,12 +335,35 @@ footer { margin-top: 12px; border-top: 1px solid var(--line); background: #0a0a0
       </section>
     </div>
     <div class="foot-bottom">
-      <span>Prices in Pakistani rupees and may change. Menu updated 23 October 2026.</span>
+      <span>Prices in Pakistani rupees and may change. Menu updated 29 October 2026.<span class="note">Dish pictures are for illustration; serving may vary.</span></span>
       <a href="#top">Back to top &#8593;</a>
     </div>
   </div>
 </footer>
 <script>
+document.documentElement.classList.add('js');
+(function () {
+  var dishes = Array.prototype.slice.call(document.querySelectorAll('.dish'));
+  var nav = document.getElementById('show-nav');
+  var count = document.getElementById('show-count');
+  var show = document.getElementById('show');
+  if (!('IntersectionObserver' in window)) { dishes.forEach(function (d) { d.classList.add('in'); }); return; }
+  var reveal = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) { entry.target.classList.add('in'); reveal.unobserve(entry.target); }
+    });
+  }, { threshold: 0.18 });
+  var current = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) count.textContent = entry.target.id.replace('dish-', '') + ' / ' + String(dishes.length).padStart(2, '0');
+    });
+  }, { rootMargin: '-50% 0px -50% 0px' });
+  var inside = new IntersectionObserver(function (entries) {
+    nav.classList.toggle('on', entries[0].isIntersecting);
+  }, { rootMargin: '-35% 0px -35% 0px' });
+  dishes.forEach(function (d) { reveal.observe(d); current.observe(d); });
+  inside.observe(show);
+})();
 (function () {
   var opensAt = 10, closesAt = 1, zone = "Asia/Karachi";
   var pills = Array.prototype.slice.call(document.querySelectorAll('.status'));

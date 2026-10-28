@@ -1,0 +1,60 @@
+[
+  {
+    "name": "Zinger Burger",
+    "word": "Zinger",
+    "kicker": "Burgers",
+    "image": "img/zinger.webp",
+    "text": "A crunchy fried chicken fillet, melted cheese and our house sauce, stacked in a toasted sesame bun."
+  },
+  {
+    "name": "Beef Smash Burger Double Patty",
+    "title": "Double Smash Burger",
+    "word": "Smash",
+    "kicker": "Burgers",
+    "image": "img/smash.webp",
+    "text": "Two beef patties smashed hot on the griddle for crispy edges, with cheddar melting down every side."
+  },
+  {
+    "name": "Grilled Shawarma",
+    "word": "Shawarma",
+    "kicker": "Shawarma",
+    "image": "img/shawarma.webp",
+    "text": "Grilled chicken, garlic sauce, pickles and fries, rolled tight and toasted until the wrap crackles."
+  },
+  {
+    "name": "Loaded Fries",
+    "word": "Loaded",
+    "kicker": "Fries",
+    "image": "img/fries.webp",
+    "text": "Golden fries buried under cheese sauce, crispy chicken, jalapenos and a garlic mayo drizzle."
+  },
+  {
+    "name": "Alfredo Pasta",
+    "word": "Alfredo",
+    "kicker": "Pasta",
+    "image": "img/pasta.webp",
+    "text": "Ribbons of pasta in a silky cream and parmesan sauce, topped with grilled chicken."
+  },
+  {
+    "name": "Boneless Fish Tikka",
+    "word": "Tikka",
+    "kicker": "Fish",
+    "image": "img/fish.webp",
+    "text": "Boneless fish in a red tikka masala, charred over the flame and served sizzling with mint chutney."
+  },
+  {
+    "name": "BBQ Wings",
+    "word": "Wings",
+    "kicker": "Starters",
+    "image": "img/wings.webp",
+    "text": "Crispy wings tossed in a sticky, smoky glaze with sesame and spring onion."
+  },
+  {
+    "name": "Jenzy Special Doodh Patti Chai",
+    "title": "Doodh Patti Chai",
+    "word": "Chai",
+    "kicker": "Jenzy special",
+    "image": "img/chai.webp",
+    "text": "Strong tea boiled in milk with cardamom, poured from high for the froth. The way to end the night."
+  }
+]

@@ -129,6 +129,39 @@ const chips = categories
   .map((category) => `<a href="#${category.id}" data-chip="${category.id}">${escape(category.name)}</a>`)
   .join('')
 
+const featured = JSON.parse(readFileSync('featured.json', 'utf8')).map((dish, index, list) => {
+  const { base, size } = splitSize(dish.name)
+  const item = categories
+    .flatMap((category) => category.items)
+    .find((entry) => entry.name === dish.name || (size === '' && entry.name === base))
+  if (!item) throw new Error(`featured.json: "${dish.name}" is not on the menu`)
+  const price = item.sizes.length
+    ? `from ${money(Math.min(...item.sizes.map((entry) => entry.price)))}`
+    : money(item.price)
+  return { ...dish, title: dish.title ?? dish.name, price, number: String(index + 1).padStart(2, '0'), total: String(list.length).padStart(2, '0') }
+})
+
+const showHtml = featured
+  .map(
+    (dish, index) => `<section class="dish" id="dish-${dish.number}" aria-label="${escape(dish.title)}">
+  <div class="dish-glow"></div>
+  <div class="dish-inner">
+    <div class="dish-info">
+      <p class="dish-num"><span>${dish.number}</span> / ${dish.total}</p>
+      <p class="dish-kicker">${escape(dish.kicker)}</p>
+      <h2 class="dish-title">${escape(dish.title)}</h2>
+      <p class="dish-text">${escape(dish.text)}</p>
+      <div class="dish-buy"><span class="dish-price">${escape(dish.price)}</span><a class="dish-order" href="https://wa.me/${international(site.whatsapp)}?text=${encodeURIComponent(`Hi ${site.name}, I'd like to order: ${dish.title}`)}">Order on WhatsApp</a></div>
+    </div>
+    <div class="dish-stage">
+      <img src="${escape(dish.image)}" alt="${escape(dish.title)}" width="900" height="900" ${index < 1 ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async">
+      <p class="dish-word" style="--len:${dish.word.length}">${escape(dish.word)}</p>
+    </div>
+  </div>
+</section>`
+  )
+  .join('\n')
+
 const updated = new Intl.DateTimeFormat('en-GB', {
   day: 'numeric',
   month: 'long',
@@ -168,7 +201,7 @@ const page = `<!doctype html>
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
-html { scroll-padding-top: 118px; }
+.category { scroll-margin-top: 118px; }
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.45; -webkit-text-size-adjust: 100%; }
 a { color: inherit; }
 .wrap { max-width: 720px; margin: 0 auto; padding-inline: 18px; }
@@ -232,6 +265,52 @@ footer { margin-top: 12px; border-top: 1px solid var(--line); background: #0a0a0
 .foot-actions .btn { flex: 1 1 200px; justify-content: center; }
 .foot-bottom { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 18px; font-size: 13px; }
 .foot-bottom a { color: var(--ink); font-weight: 700; text-decoration: none; white-space: nowrap; }
+.hero .jump { margin-top: 6px; display: inline-flex; flex-direction: column; align-items: center; gap: 2px; color: var(--muted); font-size: 13px; letter-spacing: 1.4px; text-transform: uppercase; text-decoration: none; }
+.hero .jump b { font-family: var(--display); font-weight: 400; font-size: 24px; letter-spacing: 0.5px; text-transform: none; color: var(--yellow); }
+.hero .jump i { font-style: normal; animation: nudge 1.6s ease-in-out infinite; color: var(--yellow); font-size: 20px; }
+@keyframes nudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+.show { position: relative; border-top: 1px solid var(--line); }
+.dish { position: relative; min-height: 100svh; display: grid; place-items: center; padding: 64px 18px 28px; overflow: hidden; }
+.dish + .dish { border-top: 1px solid #1b1a16; }
+.dish-glow { position: absolute; inset: 0; background: radial-gradient(60% 45% at 50% 52%, rgba(255, 210, 31, 0.16), rgba(255, 210, 31, 0) 70%); pointer-events: none; }
+.dish-inner { position: relative; width: 100%; max-width: 1120px; display: grid; justify-items: center; text-align: center; gap: 6px; }
+.dish-info { display: contents; }
+.dish-num { order: 1; margin: 0; font-family: var(--display); font-size: 22px; color: var(--muted); line-height: 1; }
+.dish-num span { font-size: 42px; color: var(--yellow); }
+.dish-kicker { order: 2; margin: 2px 0 0; font-size: 12.5px; font-weight: 700; letter-spacing: 2.4px; text-transform: uppercase; color: var(--gold); }
+.dish-stage { order: 3; position: relative; width: min(86vw, 44svh, 560px); display: grid; justify-items: center; }
+.dish-stage img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; -webkit-mask-image: radial-gradient(closest-side, #000 70%, transparent 100%); mask-image: radial-gradient(closest-side, #000 70%, transparent 100%); }
+.dish-word { margin: -0.42em 0 0; font-family: var(--display); font-weight: 400; font-size: min(calc(140vw / var(--len)), 22svh, 150px); line-height: 0.9; color: var(--yellow); letter-spacing: 1px; text-shadow: 0 6px 0 #8a6a00, 0 18px 40px rgba(255, 210, 31, 0.35); transform: rotate(-3deg); pointer-events: none; }
+.dish-title { order: 4; margin: 8px 0 0; font-size: 24px; font-weight: 700; line-height: 1.15; }
+.dish-text { order: 5; margin: 2px 0 0; max-width: 420px; color: var(--muted); font-size: 15px; line-height: 1.4; }
+.dish-buy { order: 6; margin-top: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 16px; }
+.dish-price { font-family: var(--display); font-size: 34px; line-height: 1; color: #14130f; background: var(--yellow); padding: 4px 14px 6px; border-radius: 6px 14px 8px 12px; transform: rotate(-2deg); }
+.dish-order { color: var(--yellow); font-weight: 700; text-decoration: none; border-bottom: 2px solid rgba(255, 210, 31, 0.45); padding-bottom: 1px; }
+@media (min-width: 900px) {
+  .dish { padding-inline: 40px; }
+  .dish-inner { grid-template-columns: 360px 1fr; align-items: center; text-align: left; justify-items: start; gap: 0 40px; }
+  .dish-info { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+  .dish-info > * { order: 0; }
+  .dish-buy { justify-content: flex-start; }
+  .dish { padding-block: 70px 40px; }
+  .dish-stage { justify-self: center; width: min(48vw, 66svh, 620px); }
+  .dish-word { font-size: min(calc(150vw / var(--len)), 20svh, 170px); }
+  .dish-glow { background: radial-gradient(45% 55% at 66% 50%, rgba(255, 210, 31, 0.16), rgba(255, 210, 31, 0) 70%); }
+}
+.js .dish .dish-stage img, .js .dish .dish-word, .js .dish .dish-info > *, .js .dish .dish-num, .js .dish .dish-kicker, .js .dish .dish-title, .js .dish .dish-text, .js .dish .dish-buy { opacity: 0; transition: opacity 0.7s ease, transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.js .dish .dish-stage img { transform: scale(0.86) translateY(30px); }
+.js .dish .dish-word { transform: translateY(40px) rotate(-3deg); transition-delay: 0.15s; }
+.js .dish .dish-title, .js .dish .dish-text, .js .dish .dish-buy { transform: translateY(16px); transition-delay: 0.25s; }
+.js .dish.in .dish-stage img, .js .dish.in .dish-word, .js .dish.in .dish-info > *, .js .dish.in .dish-num, .js .dish.in .dish-kicker, .js .dish.in .dish-title, .js .dish.in .dish-text, .js .dish.in .dish-buy { opacity: 1; }
+.js .dish.in .dish-stage img { transform: none; }
+.js .dish.in .dish-word { transform: rotate(-3deg); }
+.js .dish.in .dish-title, .js .dish.in .dish-text, .js .dish.in .dish-buy { transform: none; }
+.show-nav { position: fixed; left: 50%; top: calc(10px + env(safe-area-inset-top, 0px)); z-index: 6; transform: translate(-50%, -160%); transition: transform 0.35s ease; display: flex; align-items: center; gap: 4px; padding: 5px; border-radius: 999px; background: rgba(23, 23, 20, 0.92); border: 1px solid var(--line); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
+.show-nav.on { transform: translate(-50%, 0); }
+.show-nav span { white-space: nowrap; padding: 0 12px; font-family: var(--display); font-size: 20px; color: var(--yellow); font-variant-numeric: tabular-nums; }
+.show-nav a { padding: 9px 16px; border-radius: 999px; background: var(--yellow); color: #14130f; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.note { display: block; margin-top: 4px; }
+@media (prefers-reduced-motion: reduce) { .js .dish *, .show-nav, .hero .jump i { transition: none !important; animation: none !important; transform: none !important; opacity: 1 !important; } .js .dish .dish-word { transform: rotate(-3deg) !important; } }
 [hidden] { display: none !important; }
 </style>
 </head>
@@ -245,8 +324,13 @@ footer { margin-top: 12px; border-top: 1px solid var(--line); background: #0a0a0
     <a class="btn primary" href="https://wa.me/${international(site.whatsapp)}">WhatsApp <small>${escape(site.whatsapp)}</small></a>
     <a class="btn" href="tel:${digits(site.phone)}">Call <small>${escape(site.phone)}</small></a>
   </div>
+  <a class="jump" href="#dish-01"><b>Scroll to taste</b>our favourites<i>&#8595;</i></a>
 </header>
-<div class="bar">
+<div class="show" id="show">
+${showHtml}
+</div>
+<nav class="show-nav" id="show-nav" aria-label="Favourites"><span id="show-count">01 / ${String(featured.length).padStart(2, '0')}</span><a href="#menu">Full menu &#8595;</a></nav>
+<div class="bar" id="menu">
   <div class="wrap">
     <div class="search"><label class="sr" for="q" hidden>Search the menu</label><input id="q" type="search" inputmode="search" autocomplete="off" placeholder="Search ${itemCount} items, e.g. zinger, tikka, fries"></div>
     <nav class="chips" aria-label="Menu sections">${chips}</nav>
@@ -283,12 +367,35 @@ ${sections}
       </section>
     </div>
     <div class="foot-bottom">
-      <span>Prices in Pakistani rupees and may change. Menu updated ${escape(updated)}.</span>
+      <span>Prices in Pakistani rupees and may change. Menu updated ${escape(updated)}.<span class="note">Dish pictures are for illustration; serving may vary.</span></span>
       <a href="#top">Back to top &#8593;</a>
     </div>
   </div>
 </footer>
 <script>
+document.documentElement.classList.add('js');
+(function () {
+  var dishes = Array.prototype.slice.call(document.querySelectorAll('.dish'));
+  var nav = document.getElementById('show-nav');
+  var count = document.getElementById('show-count');
+  var show = document.getElementById('show');
+  if (!('IntersectionObserver' in window)) { dishes.forEach(function (d) { d.classList.add('in'); }); return; }
+  var reveal = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) { entry.target.classList.add('in'); reveal.unobserve(entry.target); }
+    });
+  }, { threshold: 0.18 });
+  var current = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) count.textContent = entry.target.id.replace('dish-', '') + ' / ' + String(dishes.length).padStart(2, '0');
+    });
+  }, { rootMargin: '-50% 0px -50% 0px' });
+  var inside = new IntersectionObserver(function (entries) {
+    nav.classList.toggle('on', entries[0].isIntersecting);
+  }, { rootMargin: '-35% 0px -35% 0px' });
+  dishes.forEach(function (d) { reveal.observe(d); current.observe(d); });
+  inside.observe(show);
+})();
 (function () {
   var opensAt = ${Number(site.opensAt)}, closesAt = ${Number(site.closesAt)}, zone = ${JSON.stringify(site.timeZone)};
   var pills = Array.prototype.slice.call(document.querySelectorAll('.status'));

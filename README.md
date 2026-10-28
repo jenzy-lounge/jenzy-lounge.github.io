@@ -10,6 +10,10 @@ Live page: https://jenzy-lounge.github.io/
 2. Run `npm install` once, then `npm run build`.
 3. Commit and push. The live page updates within a minute. The printed QR code does not change.
 
+## Favourite dishes at the top
+
+`featured.json` lists the dishes shown full screen at the top of the page, one per screen, with the picture in `img/`, the big word, a short line and the section name. `name` must match a row in `menu.csv` exactly; the price comes from there, so it stays in step. Pictures should be square WebP files about 900 px wide on a black background.
+
 ## Change the address, hours or phone numbers
 
 Edit `site.json`, then build, commit and push as above.
