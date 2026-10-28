@@ -292,11 +292,11 @@ footer { margin-top: 12px; border-top: 1px solid var(--line); background: #0a0a0
 .foot-block h2 { margin: 0; font-family: var(--body); font-weight: 700; font-size: 12.5px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--gold); }
 .foot-block p { margin: 0; color: var(--ink); line-height: 1.45; }
 .foot-block .status { align-self: flex-start; }
-.foot-link { align-self: flex-start; color: var(--yellow); font-weight: 700; text-decoration: none; border-bottom: 2px solid rgba(255, 210, 31, 0.45); padding-bottom: 1px; }
+.foot-link { align-self: flex-start; display: inline-block; padding: 10px 0; color: var(--yellow); font-weight: 700; text-decoration: underline; text-decoration-color: rgba(255, 210, 31, 0.45); text-decoration-thickness: 2px; text-underline-offset: 4px; }
 .foot-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
 .foot-actions .btn { flex: 1 1 200px; justify-content: center; }
 .foot-bottom { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 18px; font-size: 13px; }
-.foot-bottom a { color: var(--ink); font-weight: 700; text-decoration: none; white-space: nowrap; }
+.foot-bottom a { display: inline-block; padding: 12px 0; color: var(--ink); font-weight: 700; text-decoration: none; white-space: nowrap; }
 .hero .jump { margin-top: 6px; display: inline-flex; flex-direction: column; align-items: center; gap: 2px; color: var(--muted); font-size: 13px; letter-spacing: 1.4px; text-transform: uppercase; text-decoration: none; }
 .hero .jump b { font-family: var(--display); font-weight: 400; font-size: 24px; letter-spacing: 0.5px; text-transform: none; color: var(--yellow); }
 .hero .jump i { font-style: normal; animation: nudge 1.6s ease-in-out infinite; color: var(--yellow); font-size: 20px; }
@@ -318,10 +318,20 @@ footer { margin-top: 12px; border-top: 1px solid var(--line); background: #0a0a0
 .dish-word span { display: block; text-shadow: 0 6px 0 #8a6a00, 0 18px 40px rgba(255, 210, 31, 0.35); }
 .dish-title { order: 4; margin: 8px 0 0; font-size: 24px; font-weight: 700; line-height: 1.15; }
 .dish-text { order: 5; margin: 2px 0 0; max-width: 420px; color: var(--muted); font-size: 15px; line-height: 1.4; }
-.dish-buy { order: 6; margin-top: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 16px; }
+.dish-buy { order: 6; margin-top: 4px; display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; gap: 12px; white-space: nowrap; }
 .dish-price { font-family: var(--display); font-size: 34px; line-height: 1; color: #14130f; background: var(--yellow); padding: 4px 14px 6px; border-radius: 6px 14px 8px 12px; transform: rotate(-2deg); }
-.dish-order { color: var(--yellow); font-weight: 700; text-decoration: none; border-bottom: 2px solid rgba(255, 210, 31, 0.45); padding-bottom: 1px; }
+.dish-order { display: inline-block; padding: 11px 2px; color: var(--yellow); font-weight: 700; text-decoration: underline; text-decoration-color: rgba(255, 210, 31, 0.45); text-decoration-thickness: 2px; text-underline-offset: 4px; }
 .embers, .stage-list, .stage-hint, .stage-bar { display: none; }
+@media (max-height: 760px) and (max-width: 899px) {
+  .dish { padding-top: 58px; padding-bottom: 10px; }
+  .dish-num span { font-size: 34px; }
+  .dish-num { font-size: 18px; }
+  .dish-stage { width: min(80vw, 36svh); }
+  .dish-word { font-size: min(calc(130vw / var(--len)), 17svh, 120px); }
+  .dish-title { margin-top: 4px; font-size: 21px; }
+  .dish-text { font-size: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .dish-price { font-size: 28px; }
+}
 @media (min-width: 900px) {
   .dish { padding: 70px 40px 40px; }
   .dish-inner { grid-template-columns: 360px 1fr; align-items: center; text-align: left; justify-items: start; gap: 0 40px; }
@@ -350,7 +360,8 @@ footer { margin-top: 12px; border-top: 1px solid var(--line); background: #0a0a0
 .pin .dish.on .dish-text { transition-delay: 0.15s; }
 .pin .dish.on .dish-buy { transition-delay: 0.2s; }
 .pin .dish.on .dish-price { transform: rotate(-2deg); }
-.pin .embers { display: block; position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+.pin .embers { display: block; position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+.pin .dish { z-index: 1; }
 .embers i { position: absolute; bottom: -12px; left: var(--x); width: 4px; height: 4px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 10px 2px rgba(255, 190, 0, 0.7); opacity: 0; animation: rise var(--d) linear infinite; animation-delay: var(--t); }
 @keyframes rise { 0% { transform: translate(0, 0); opacity: 0; } 10% { opacity: 0.85; } 100% { transform: translate(var(--dx), -105svh); opacity: 0; } }
 .pin .stage-bar { display: block; position: absolute; right: 10px; top: 50%; width: 3px; height: 34svh; transform: translateY(-50%); background: var(--line); border-radius: 3px; overflow: hidden; z-index: 3; }
@@ -408,6 +419,7 @@ footer { margin-top: 12px; border-top: 1px solid var(--line); background: #0a0a0
   <div class="actions">
     <a class="btn primary" href="https://wa.me/${international(site.whatsapp)}">WhatsApp <small>${escape(site.whatsapp)}</small></a>
     <a class="btn" href="tel:${digits(site.phone)}">Call <small>${escape(site.phone)}</small></a>
+    <a class="btn" href="${escape(site.mapsUrl ?? '#visit')}">Directions</a>
   </div>
   <a class="jump" href="#show"><b>Scroll to taste</b>our favourites<i>&#8595;</i></a>
 </header>
@@ -439,7 +451,7 @@ ${sections}
       <section class="foot-block">
         <h2>Find us</h2>
         <p>${escape(site.address)}</p>
-        <a class="foot-link" href="https://www.google.com/maps/search/?api=1&amp;query=${encodeURIComponent(`${site.name} ${site.suffix}, ${site.address}`)}">Open in Google Maps</a>
+        <a class="foot-link" href="${escape(site.mapsUrl ?? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${site.name} ${site.suffix}, ${site.address}`)}`)}">Open in Google Maps</a>
       </section>
       <section class="foot-block">
         <h2>Hours</h2>
@@ -641,6 +653,10 @@ document.documentElement.classList.add('js');
       if (shown) any = true;
     });
     empty.hidden = any;
+    var bar = document.getElementById('menu');
+    var list = document.querySelector('main');
+    var listTop = list.getBoundingClientRect().top + window.scrollY - bar.offsetHeight;
+    if (window.scrollY > listTop + 1) window.scrollTo(0, listTop);
     measure();
     requestSpy();
   });
